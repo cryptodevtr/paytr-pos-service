@@ -1,0 +1,1 @@
+PayTR – POS Seçim Servisi
