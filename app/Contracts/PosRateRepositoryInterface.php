@@ -2,10 +2,14 @@
 
 namespace App\Contracts;
 
+use App\DTOs\POSRateDTO;
+use App\Models\PosRate;
+
 interface PosRateRepositoryInterface
 {
-    public function getAll();
-    public function findBestRate(array $criteria);
-    public function updateOrCreate(array $data);
-    public function truncate();
+    public function getAllAsDTO(): array;
+    public function findBestRateAsDTO(array $criteria): ?POSRateDTO;
+    public function updateOrCreateFromDTO(POSRateDTO $dto): PosRate;
+    public function bulkCreateFromDTOs(array $dtos): void;
+    public function deleteAll(): void;
 }
