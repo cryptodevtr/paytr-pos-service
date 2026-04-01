@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pos_rate_histories', function (Blueprint $table) {
-            $table->id();
+           $table->id();
+            $table->json('data');
+            $table->timestamp('fetched_at');
             $table->timestamps();
         });
     }

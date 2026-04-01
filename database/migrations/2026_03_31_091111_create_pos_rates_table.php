@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('pos_rates', function (Blueprint $table) {
             $table->id();
+            $table->string('pos_name');
+            $table->enum('card_type', ['credit', 'debit', 'unknown']);
+            $table->string('card_brand');
+            $table->integer('installment');
+            $table->string('currency', 3);
+            $table->decimal('commission_rate', 5, 4);
+            $table->unique(['pos_name', 'card_type', 'card_brand', 'installment', 'currency'], 'unique_pos_rate');
             $table->timestamps();
         });
     }
