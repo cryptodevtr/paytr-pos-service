@@ -1,0 +1,210 @@
+{
+	"info": {
+		"_postman_id": "paytr-pos-service-collection",
+		"name": "PayTR POS Service API",
+		"description": "PayTR POS Service - En uygun POS seçimi ve oran senkronizasyonu",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POS Selection",
+			"item": [
+				{
+					"name": "Select Best POS - Credit Card TRY",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": 1000,\n    \"installment\": 3,\n    \"currency\": \"TRY\",\n    \"card_type\": \"credit\",\n    \"card_brand\": \"visa\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/pos/select",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"pos",
+								"select"
+							]
+						},
+						"description": "En uygun POS'u seçer - Kredi kartı, TRY, 3 taksit"
+					},
+					"response": []
+				},
+				{
+					"name": "Select Best POS - Debit Card",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": 500,\n    \"installment\": 1,\n    \"currency\": \"TRY\",\n    \"card_type\": \"debit\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/pos/select",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"pos",
+								"select"
+							]
+						},
+						"description": "En uygun POS'u seçer - Banka kartı, TRY, tek çekim"
+					},
+					"response": []
+				},
+				{
+					"name": "Select Best POS - USD",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": 100,\n    \"installment\": 6,\n    \"currency\": \"USD\",\n    \"card_type\": \"credit\",\n    \"card_brand\": \"mastercard\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/pos/select",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"pos",
+								"select"
+							]
+						},
+						"description": "En uygun POS'u seçer - USD para birimi, 6 taksit"
+					},
+					"response": []
+				},
+				{
+					"name": "Select Best POS - EUR",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": 250,\n    \"installment\": 12,\n    \"currency\": \"EUR\",\n    \"card_type\": \"credit\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/pos/select",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"pos",
+								"select"
+							]
+						},
+						"description": "En uygun POS'u seçer - EUR para birimi, 12 taksit"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "POS Rate Sync",
+			"item": [
+				{
+					"name": "Sync Rates (Synchronous)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/pos/sync",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"pos",
+								"sync"
+							]
+						},
+						"description": "POS oranlarını senkron olarak günceller (hemen çalışır)"
+					},
+					"response": []
+				},
+				{
+					"name": "Trigger Sync (Async Queue)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/pos/sync/trigger",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"pos",
+								"sync",
+								"trigger"
+							]
+						},
+						"description": "POS oranlarını asenkron olarak günceller (queue'ya ekler)"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
