@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Contracts\PosRateRepositoryInterface;
 use App\DTOs\POSRateDTO;
 use App\Models\PosRate;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class PosRateRepository implements PosRateRepositoryInterface
@@ -28,40 +29,46 @@ class PosRateRepository implements PosRateRepositoryInterface
 
     public function findBestRateAsDTO(array $criteria): ?POSRateDTO
     {
-        $query = PosRate::query();
+        $cacheKey = 'pos_rate:' . md5(json_encode($criteria));
 
-        if (isset($criteria['card_type'])) {
-            $query->where('card_type', $criteria['card_type']);
-        }
+        // Cache'den dene, yoksa database'den çek
+        // Normalde cache facade çok tercih etmem şimdilik vakit olmadığı için kullandım
+        return Cache::remember($cacheKey, 300, function () use ($criteria) {
+            $query = PosRate::query();
 
-        if (isset($criteria['card_brand'])) {
-            $query->where('card_brand', $criteria['card_brand']);
-        } else {
-            $query->whereNotNull('card_brand');
-        }
+            if (isset($criteria['card_type'])) {
+                $query->where('card_type', $criteria['card_type']);
+            }
 
-        if (isset($criteria['installment'])) {
-            $query->where('installment', $criteria['installment']);
-        }
+            if (isset($criteria['card_brand'])) {
+                $query->where('card_brand', $criteria['card_brand']);
+            } else {
+                $query->whereNotNull('card_brand');
+            }
 
-        if (isset($criteria['currency'])) {
-            $query->where('currency', $criteria['currency']);
-        }
+            if (isset($criteria['installment'])) {
+                $query->where('installment', $criteria['installment']);
+            }
 
-        $posRate = $query->orderBy('commission_rate', 'asc')->first();
+            if (isset($criteria['currency'])) {
+                $query->where('currency', $criteria['currency']);
+            }
 
-        if (!$posRate) {
-            return null;
-        }
+            $posRate = $query->orderBy('commission_rate', 'asc')->first();
 
-        return new POSRateDTO(
-            pos_name: $posRate->pos_name,
-            card_type: $posRate->card_type,
-            card_brand: $posRate->card_brand,
-            installment: $posRate->installment,
-            currency: $posRate->currency,
-            commission_rate: (float) $posRate->commission_rate
-        );
+            if (!$posRate) {
+                return null;
+            }
+
+            return new POSRateDTO(
+                pos_name: $posRate->pos_name,
+                card_type: $posRate->card_type,
+                card_brand: $posRate->card_brand,
+                installment: $posRate->installment,
+                currency: $posRate->currency,
+                commission_rate: (float) $posRate->commission_rate
+            );
+        });
     }
 
     public function updateOrCreateFromDTO(POSRateDTO $dto): PosRate

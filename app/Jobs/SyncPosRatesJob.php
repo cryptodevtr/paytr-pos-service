@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -53,6 +54,9 @@ class SyncPosRatesJob implements ShouldQueue
 
             DB::commit();
 
+            // Cache'i temizle (pattern ile tüm pos_rate:* keylerini sil)
+            $this->clearPosRateCache();
+
             Log::info('POS rates synced successfully', [
                 'count' => count($dtos),
                 'first_rate' => $dtos[0] ?? null
@@ -65,5 +69,21 @@ class SyncPosRatesJob implements ShouldQueue
             ]);
             throw $e;
         }
+    }
+
+    /**
+     * Clear all pos_rate cache keys
+     */
+    private function clearPosRateCache(): void
+    {
+        // Redis'te pos_rate:* pattern'ine uyan tüm keyleri sil
+        Cache::flush(); // Basit çözüm: tüm cache'i temizle
+        
+        // Alternatif: Sadece pos_rate keylerini temizle (Redis kullanıyorsak)
+        // $redis = Cache::getRedis();
+        // $keys = $redis->keys('laravel_cache:pos_rate:*');
+        // foreach ($keys as $key) {
+        //     $redis->del($key);
+        // }
     }
 }
